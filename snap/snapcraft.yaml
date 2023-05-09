@@ -23,8 +23,6 @@ apps:
     plugs:
       - network
       - network-bind
-      - home
-      - removable-media
 
 parts:
   transmission:
@@ -65,21 +63,12 @@ parts:
       - RUSTUP_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_HOME: $CRAFT_STAGE/usr/share/rust
       - CARGO_BUILD_JOBS: $CRAFT_PARALLEL_BUILD_COUNT
-    build-packages:
-      - zlib1g-dev
     meson-parameters:
       - --prefix=/usr
     override-build: |
       cargo update -p gtk4 --manifest-path $CRAFT_PART_SRC/Cargo.toml
       patch -p1 -d $CRAFT_PART_SRC < $CRAFT_PROJECT_DIR/fragments.patch
       craftctl default
-    override-prime: |
-      craftctl default
-      mkdir -p meta/gui
-      cp -r usr/share/icons meta/gui/
-      for i in `find meta/gui/icons -name "*.svg" -o -name "*.png"`; do
-        mv $i "`dirname $i`/snap.$CRAFT_PROJECT_NAME.`basename $i`"
-      done
 
   rustup:
     plugin: nil
